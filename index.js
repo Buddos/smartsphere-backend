@@ -9,13 +9,14 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Health check endpoint (without database test first)
+// Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     message: '🎓 Egerton SmartSphere API is running!',
     timestamp: new Date().toISOString(),
-    version: '1.0.0'
+    version: '1.0.0',
+    port: PORT
   });
 });
 
@@ -27,7 +28,8 @@ app.get('/api/test', (req, res) => {
     data: {
       university: 'Egerton University',
       system: 'SmartSphere',
-      status: 'Active'
+      status: 'Active',
+      port: PORT
     }
   });
 });
@@ -41,12 +43,13 @@ app.get('/', (req, res) => {
       health: '/api/health',
       test: '/api/test'
     },
-    status: 'Running 🚀'
+    status: 'Running 🚀',
+    port: PORT
   });
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 SmartSphere API running on port ${PORT}`);
   console.log(`🌐 Environment: ${process.env.NODE_ENV}`);
 });
