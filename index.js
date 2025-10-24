@@ -3,7 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000; // ✅ Use Render's dynamic port (fallback 10000)
 
 // Middleware
 app.use(cors());
@@ -11,8 +11,8 @@ app.use(express.json());
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     message: '🎓 Egerton SmartSphere API is running!',
     timestamp: new Date().toISOString(),
     version: '1.0.0',
@@ -51,5 +51,5 @@ app.get('/', (req, res) => {
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 SmartSphere API running on port ${PORT}`);
-  console.log(`🌐 Environment: ${process.env.NODE_ENV}`);
+  console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
