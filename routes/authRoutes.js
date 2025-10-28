@@ -1,32 +1,15 @@
-import express from 'express';
-import { body } from 'express-validator';
-import {
+const express = require('express');
+const { body } = require('express-validator');
+const {
   login,
   register,
   verifyToken,
   logout
-} from '../controllers/authController.js';
-import { authMiddleware } from '../middleware/authMiddleware.js';
+} = require('../controllers/authController');
+const { authMiddleware } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-// Validation rules
-const loginValidation = [
-  body('email').isEmail().normalizeEmail(),
-  body('password').isLength({ min: 6 })
-];
+// ... your route definitions
 
-const registerValidation = [
-  body('name').trim().isLength({ min: 2 }).escape(),
-  body('email').isEmail().normalizeEmail(),
-  body('password').isLength({ min: 6 }),
-  body('role').isIn(['student', 'lecturer', 'admin', 'security', 'counselor'])
-];
-
-// Routes
-router.post('/login', loginValidation, login);
-router.post('/register', registerValidation, register);
-router.get('/verify', authMiddleware, verifyToken);
-router.post('/logout', authMiddleware, logout);
-
-export default router;
+module.exports = router;
