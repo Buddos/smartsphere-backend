@@ -11,10 +11,18 @@ const generateToken = (userId, role) => {
   );
 };
 
-// Login controller
+// Login controller with better error handling
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    // Input validation
+    if (!email || !password) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Email and password are required'
+      });
+    }
 
     // Find user by email
     const [users] = await pool.execute(
@@ -67,6 +75,14 @@ export const register = async (req, res) => {
   try {
     const { name, email, password, role, student_id, department } = req.body;
 
+    // Input validation
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Name, email, password, and role are required'
+      });
+    }
+
     // Check if user already exists
     const [existingUsers] = await pool.execute(
       'SELECT id FROM users WHERE email = ?',
@@ -87,7 +103,7 @@ export const register = async (req, res) => {
     const [result] = await pool.execute(
       `INSERT INTO users (name, email, password, role, student_id, department, status) 
        VALUES (?, ?, ?, ?, ?, ?, 'active')`,
-      [name, email, hashedPassword, role, student_id, department]
+      [name, email, hashedPassword, role, student_id || null, department || null]
     );
 
     // Get created user
@@ -108,6 +124,14 @@ export const register = async (req, res) => {
 
   } catch (error) {
     console.error('Registration error:', error);
+    
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(409).json({
+        status: 'error',
+        message: 'User with this email already exists'
+      });
+    }
+    
     res.status(500).json({
       status: 'error',
       message: 'Internal server error'
